@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soduku</title>
+    
+</head>
+<style>
+    #container {
+        display:grid;
+        grid-template-columns: repeat(9, 11%);
+        margin-left: 20%;
+        margin-right: 20%;
+        margin-top: 10%;
+        
+    }
+
+    input {
+    height: 60px;
+    text-align: center;
+    font-size: 130%;
+    } 
+
+</style>
+<body>
+    <div id='container'>     
+
+    </div>
+</body>
+</html>
+
+
+<script>
+
+
+var soduku=[[],[],[],[],[],[],[],[],[]]
+
+function createGrid () {
+
+var myContainer = document.getElementById('container')
+
+
+for(var i=0;i<9;i++) 
+{
+    for(var j=0; j<9;j++)
+ {
+    
+    var myInput = document.createElement('input')
+    myInput.id= `${i}${j}` //shows id of columns
+    var number = Math.ceil(Math.random()*9)
+
+    myInput.row=i
+    myInput.col=j
+
+    if (isSafe(soduku, i, j, number)){
+        myInput.value = number
+        myInput.readOnly = true
+
+    }
+    else {
+            number=0
+            myInput.value=''
+    }
+
+    soduku[i][j] = number
+
+
+    myContainer.appendChild(myInput);
+    myInput.oninput= function (e) {
+        checkAnswer(soduku, e)
+    }
+
+
+    }
+  }
+    //console.log('soduku:', soduku)
+}
+
+//execute a function/task
+createGrid()
+
+//isSafe(soduku, i, j, number)
+function isSafe (grid, row, col, number){
+
+    for (var x=0;x<9;x++){
+            if(grid[row][x]== number)
+            {
+                return false
+            }
+        }
+
+        for(var y=0; y<9;y++)
+        {
+            if (grid[y][col]==number)
+            {
+                return false
+            }
+        }
+
+        var startRow = row - (row%3)
+        var startCol = col - (col%3)
+
+        for (var m =0; m<3; m++){
+            for (var n =0; n<3; n++){
+                if (grid[m+startRow][n+startCol]==number) {
+                    return false
+                }
+        }
+    }
+return true
+
+}
+
+
+
+function checkAnswer(grid, e){
+    var row = e.target.row
+    var col = e.target.col
+    var number = Number(e.data)
+    var id = e.target.id
+    if (number=='') {
+        return false
+    }
+    
+    
+    for (var x=0;x<9;x++){
+            if(grid[row][x]== number)
+            {
+                showColors('red', id)
+                return false
+            }
+        }
+
+        for(var y=0; y<9;y++)
+        {
+            if (grid[y][col]==number)
+            {
+                showColors('red', id)
+                return false
+            }
+        }
+
+        var startRow = row - (row%3)
+        var startCol = col - (col%3)
+
+        for (var m =0; m<3; m++){
+            for (var n =0; n<3; n++){
+                if (grid[m+startRow][n+startCol]==number){
+                    showColors('red', id)
+                    return false
+                }
+        }
+}
+showColors('green', id)
+return true
+
+}
+
+function showColors(color, id) {
+    var inp = document.getElementById(id)
+    if (color=='red') {
+        inp.style.backgroundColor='red'
+    }
+    else {
+        inp.style.backgroundColor='green'
+    }
+}
+
+</script>
